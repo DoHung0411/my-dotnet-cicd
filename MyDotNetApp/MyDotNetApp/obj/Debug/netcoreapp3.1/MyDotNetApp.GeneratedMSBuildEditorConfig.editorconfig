@@ -1,0 +1,3 @@
+is_global = true
+build_property.RootNamespace = MyDotNetApp
+build_property.ProjectDir = E:\Senior\CICD\MyDotNetApp\MyDotNetApp\
