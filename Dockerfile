@@ -3,9 +3,10 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build-env
 WORKDIR /app
 
-# Sao chép file solution và project để restore các package một cách hiệu quả
+# Sao chép file solution và các file project để restore các package một cách hiệu quả
 COPY ["MyDotNetApp/MyDotNetApp.sln", "MyDotNetApp/"]
 COPY ["MyDotNetApp/MyDotNetApp/MyDotNetApp.csproj", "MyDotNetApp/MyDotNetApp/"]
+COPY ["MyDotNetApp/MyDotNetApp.Tests/MyDotNetApp.Tests.csproj", "MyDotNetApp/MyDotNetApp.Tests/"]
 RUN dotnet restore "MyDotNetApp/MyDotNetApp.sln"
 
 # Sao chép toàn bộ source code của dự án
