@@ -8,37 +8,8 @@ on:
       - main
 
 jobs:
-  # Job này để triển khai Reverse Proxy (Nginx)
-  deploy-proxy:
-    # Quan trọng: Chỉ định job này chạy trên runner bạn đã cài đặt
-    runs-on: self-hosted
-
-    steps:
-      # Bước 1: Checkout code để có thể truy cập file nginx.conf
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # Bước 2: Dừng và xóa container proxy cũ (nếu có)
-      - name: Stop and Remove Old Proxy Container
-        run: |
-          docker stop nginx-proxy
-          docker rm nginx-proxy
-        continue-on-error: true
-
-      # Bước 3: Chạy container Nginx mới
-      - name: Run Nginx Proxy Container
-        run: |
-          docker run -d `
-            --name nginx-proxy `
-            --network cicd-network `
-            -p 80:80 `
-            -v "${{ github.workspace }}/nginx/nginx.conf:/etc/nginx/nginx.conf" `
-            nginx:latest
-
-  # Job này để build và triển khai ứng dụng .NET
+  # Job này để build và triển khai ứng dụng .NET (CHẠY TRƯỚC)
   build-and-deploy-app:
-    # Job này phụ thuộc vào job deploy-proxy, nó sẽ chỉ chạy khi proxy đã chạy xong
-    needs: deploy-proxy
     runs-on: self-hosted
 
     steps:
@@ -63,4 +34,32 @@ jobs:
           docker run -d `
             --name mydotnetapp-container `
             --network cicd-network `
-            mydotnetapp:latest 
+            mydotnetapp:latest
+
+  # Job này để triển khai Reverse Proxy (Nginx) (CHẠY SAU)
+  deploy-proxy:
+    # Job này phụ thuộc vào job build-and-deploy-app, nó sẽ chỉ chạy khi app đã chạy xong
+    needs: build-and-deploy-app
+    runs-on: self-hosted
+
+    steps:
+      # Bước 1: Checkout code để có thể truy cập file nginx.conf
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Bước 2: Dừng và xóa container proxy cũ (nếu có)
+      - name: Stop and Remove Old Proxy Container
+        run: |
+          docker stop nginx-proxy
+          docker rm nginx-proxy
+        continue-on-error: true
+
+      # Bước 3: Chạy container Nginx mới
+      - name: Run Nginx Proxy Container
+        run: |
+          docker run -d `
+            --name nginx-proxy `
+            --network cicd-network `
+            -p 80:80 `
+            -v "${{ github.workspace }}/nginx/nginx.conf:/etc/nginx/nginx.conf" `
+            nginx:latest 
