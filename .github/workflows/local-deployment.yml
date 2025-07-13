@@ -21,7 +21,7 @@ jobs:
       # Step này sẽ tự động tìm và chạy tất cả các test trong solution.
       # Nếu có bất kỳ test nào thất bại, workflow sẽ dừng lại ở đây.
       - name: Run unit tests
-        run: dotnet test
+        run: dotnet test MyDotNetApp/MyDotNetApp.sln
 
       # Bước 2: Build Docker image từ Dockerfile (chỉ chạy nếu test thành công)
       - name: Build Docker image
