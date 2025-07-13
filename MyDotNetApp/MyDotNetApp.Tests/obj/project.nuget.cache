@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "PEPv3UvpD82+Y8uiOqHQfD0JBUfbzn5V0vO7w9HsM6080ARX9SmN+FO25E7EOh16awBFkFzoeQvVpckqapq42Q==",
+  "dgSpecHash": "KROj8MYVht6TlVRAkMpj7CZLenq5pYhlslmqx9Lzctl/Z3AJB6EuQMEeUWmoabms8olmU56YmFq9mevoSLWS8Q==",
   "success": true,
   "projectFilePath": "E:\\Senior\\CICD\\MyDotNetApp\\MyDotNetApp.Tests\\MyDotNetApp.Tests.csproj",
   "expectedPackageFiles": [

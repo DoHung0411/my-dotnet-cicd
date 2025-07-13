@@ -1670,6 +1670,19 @@
         "build": {
           "build/netcoreapp2.1/xunit.runner.visualstudio.props": {}
         }
+      },
+      "MyDotNetApp/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v3.1",
+        "compile": {
+          "bin/placeholder/MyDotNetApp.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MyDotNetApp.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
       }
     }
   },
@@ -5906,11 +5919,17 @@
         "xunit.runner.visualstudio.2.4.3.nupkg.sha512",
         "xunit.runner.visualstudio.nuspec"
       ]
+    },
+    "MyDotNetApp/1.0.0": {
+      "type": "project",
+      "path": "../MyDotNetApp/MyDotNetApp.csproj",
+      "msbuildProject": "../MyDotNetApp/MyDotNetApp.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net5.0": [
       "Microsoft.NET.Test.Sdk >= 16.9.4",
+      "MyDotNetApp >= 1.0.0",
       "coverlet.collector >= 3.0.2",
       "xunit >= 2.4.1",
       "xunit.runner.visualstudio >= 2.4.3"
@@ -5942,7 +5961,11 @@
       "frameworks": {
         "net5.0": {
           "targetAlias": "net5.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "E:\\Senior\\CICD\\MyDotNetApp\\MyDotNetApp\\MyDotNetApp.csproj": {
+              "projectPath": "E:\\Senior\\CICD\\MyDotNetApp\\MyDotNetApp\\MyDotNetApp.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
