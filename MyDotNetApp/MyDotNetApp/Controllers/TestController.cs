@@ -9,7 +9,7 @@ namespace MyDotNetApp.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(new { message = "Hello from Test API abc! testted" });
+            return Ok(new { message = "aa Hello from Test API abc! testted" });
         }
     }
 } 
