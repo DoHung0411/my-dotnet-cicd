@@ -21,18 +21,18 @@ jobs:
       # Bước 2: Dừng và xóa container proxy cũ (nếu có)
       - name: Stop and Remove Old Proxy Container
         run: |
-          docker stop nginx-proxy || true
-          docker rm nginx-proxy || true
+          docker stop nginx-proxy
+          docker rm nginx-proxy
         continue-on-error: true
 
       # Bước 3: Chạy container Nginx mới
       - name: Run Nginx Proxy Container
         run: |
-          docker run -d \
-            --name nginx-proxy \
-            --network cicd-network \
-            -p 80:80 \
-            -v ${{ github.workspace }}/nginx/nginx.conf:/etc/nginx/nginx.conf \
+          docker run -d `
+            --name nginx-proxy `
+            --network cicd-network `
+            -p 80:80 `
+            -v "${{ github.workspace }}/nginx/nginx.conf:/etc/nginx/nginx.conf" `
             nginx:latest
 
   # Job này để build và triển khai ứng dụng .NET
@@ -53,14 +53,14 @@ jobs:
       # Bước 3: Dừng và xóa container ứng dụng cũ (nếu có)
       - name: Stop and Remove Old App Container
         run: |
-          docker stop mydotnetapp-container || true
-          docker rm mydotnetapp-container || true
+          docker stop mydotnetapp-container
+          docker rm mydotnetapp-container
         continue-on-error: true
       
       # Bước 4: Chạy container ứng dụng mới
       - name: Run new App Container
         run: |
-          docker run -d \
-            --name mydotnetapp-container \
-            --network cicd-network \
+          docker run -d `
+            --name mydotnetapp-container `
+            --network cicd-network `
             mydotnetapp:latest 
