@@ -1,5 +1,5 @@
 # Tên của workflow, sẽ hiển thị trên tab Actions của GitHub
-name: Local CI/CD Deployment
+name: Local CI/CD Deployment with Reverse Proxy
 
 # Kích hoạt workflow mỗi khi có push lên nhánh main
 on:
@@ -8,8 +8,37 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  # Job này để triển khai Reverse Proxy (Nginx)
+  deploy-proxy:
     # Quan trọng: Chỉ định job này chạy trên runner bạn đã cài đặt
+    runs-on: self-hosted
+
+    steps:
+      # Bước 1: Checkout code để có thể truy cập file nginx.conf
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Bước 2: Dừng và xóa container proxy cũ (nếu có)
+      - name: Stop and Remove Old Proxy Container
+        run: |
+          docker stop nginx-proxy || true
+          docker rm nginx-proxy || true
+        continue-on-error: true
+
+      # Bước 3: Chạy container Nginx mới
+      - name: Run Nginx Proxy Container
+        run: |
+          docker run -d \
+            --name nginx-proxy \
+            --network cicd-network \
+            -p 80:80 \
+            -v ${{ github.workspace }}/nginx/nginx.conf:/etc/nginx/nginx.conf \
+            nginx:latest
+
+  # Job này để build và triển khai ứng dụng .NET
+  build-and-deploy-app:
+    # Job này phụ thuộc vào job deploy-proxy, nó sẽ chỉ chạy khi proxy đã chạy xong
+    needs: deploy-proxy
     runs-on: self-hosted
 
     steps:
@@ -21,17 +50,17 @@ jobs:
       - name: Build Docker image
         run: docker build -t mydotnetapp:latest .
 
-      # Bước 3: Dừng container cũ nếu đang tồn tại
-      - name: Stop existing container
-        run: docker stop mydotnetapp-container || true
-        continue-on-error: true
-
-      # Bước 4: Xóa container cũ nếu đang tồn tại
-      - name: Remove existing container
-        run: docker rm mydotnetapp-container || true
+      # Bước 3: Dừng và xóa container ứng dụng cũ (nếu có)
+      - name: Stop and Remove Old App Container
+        run: |
+          docker stop mydotnetapp-container || true
+          docker rm mydotnetapp-container || true
         continue-on-error: true
       
-      # Bước 5: Chạy container mới từ image vừa build
-      # Ánh xạ cổng 8080 của máy bạn vào cổng 80 của container
-      - name: Run new container
-        run: docker run -d -p 8080:80 --name mydotnetapp-container mydotnetapp:latest 
+      # Bước 4: Chạy container ứng dụng mới
+      - name: Run new App Container
+        run: |
+          docker run -d \
+            --name mydotnetapp-container \
+            --network cicd-network \
+            mydotnetapp:latest 
