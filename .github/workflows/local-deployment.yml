@@ -17,7 +17,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Bước 2: Build Docker image từ Dockerfile
+      # BƯỚC MỚI: Chạy unit test
+      # Step này sẽ tự động tìm và chạy tất cả các test trong solution.
+      # Nếu có bất kỳ test nào thất bại, workflow sẽ dừng lại ở đây.
+      - name: Run unit tests
+        run: dotnet test
+
+      # Bước 2: Build Docker image từ Dockerfile (chỉ chạy nếu test thành công)
       - name: Build Docker image
         run: docker build -t mydotnetapp:latest .
 
